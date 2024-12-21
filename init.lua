@@ -1,4 +1,5 @@
-require("config.utils")
+require("utils")
+
 require("config.options")
 require("config.remap")
 require("config.autocomands")
