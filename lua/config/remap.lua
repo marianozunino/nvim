@@ -89,3 +89,6 @@ nmap("qj", "<cmd>cnext<cr>", { desc = "Next quickfix item" })
 nmap("qk", "<cmd>cprev<cr>", { desc = "Previous quickfix item" })
 
 nmap("<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
+
+-- Launch lazygit in a new tmux pane, exits when done
+nmap("<leader>lg", "<cmd>!tmux new-window -c " .. vim.fn.getcwd() .. " -- lazygit <CR><CR>", { desc = "Git Go" })
