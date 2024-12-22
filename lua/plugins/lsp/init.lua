@@ -4,9 +4,9 @@ local M = {
     "saghen/blink.cmp",
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
-    require("config.plugins.lsp.extras.lazydev"),
-    require("config.plugins.lsp.extras.gopher"),
-    require("config.plugins.lsp.extras.typescript"),
+    require("plugins.lsp.extras.lazydev"),
+    require("plugins.lsp.extras.gopher"),
+    require("plugins.lsp.extras.typescript"),
   },
 }
 
@@ -124,7 +124,7 @@ function M.config()
         }
 
         -- Try to load server-specific configuration
-        local ok, server_opts = pcall(require, "config.plugins.lsp.servers." .. server_name)
+        local ok, server_opts = pcall(require, "plugins.lsp.servers." .. server_name)
         if ok then
           base_opts = vim.tbl_deep_extend("force", base_opts, server_opts)
         end
