@@ -4,11 +4,10 @@ local M = {
 
 M.config = function()
   local startify = require("alpha.themes.startify")
-
   startify.section.bottom_buttons.val = {
-    startify.button("q", "Quit", "<cmd>q <CR>"), -- preserve the quit button
+    startify.button("e", "New file", "<cmd>ene <CR>"),
+    startify.button("q", "Quit", "<cmd>q <CR>"),
   }
-
   require("alpha").setup(startify.config)
 end
 
