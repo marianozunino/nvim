@@ -10,6 +10,7 @@ local M = {
   },
 }
 
+-- Set up autocommands for document highlights
 local function setup_autocommands(client, bufnr)
   if client.server_capabilities.documentHighlightProvider then
     local group = vim.api.nvim_create_augroup("LSPDocumentHighlight", { clear = true })
@@ -26,6 +27,7 @@ local function setup_autocommands(client, bufnr)
   end
 end
 
+-- Set up key mappings for LSP functionality
 local function setup_keymaps(bufnr)
   local keymaps = {
     { "<C-h>", vim.lsp.buf.signature_help, "Signature Help" },
@@ -44,6 +46,7 @@ local function setup_keymaps(bufnr)
   end
 end
 
+-- Function called when LSP attaches to a buffer
 local function on_attach(client, bufnr)
   setup_autocommands(client, bufnr)
   setup_keymaps(bufnr)
@@ -51,12 +54,14 @@ end
 
 local BORDER = "rounded"
 
+-- Customize hover and signature help handlers
 local handlers = {
   ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = BORDER }),
   ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = BORDER }),
 }
 
 function M.config()
+  -- Set up Mason
   require("mason").setup({
     max_concurrent_installers = 4,
   })
@@ -79,12 +84,14 @@ function M.config()
     "shfmt",
     "stylua",
     "latexindent",
+    "clang-format",
 
     -- Additional tools
     "eslint_d",
     "templ",
   }
 
+  -- Install missing tools
   local registry = require("mason-registry")
   for _, tool in ipairs(ensure_installed) do
     if not registry.is_installed(tool) then
@@ -92,6 +99,7 @@ function M.config()
     end
   end
 
+  -- Set up Mason LSP config
   require("mason-lspconfig").setup({
     automatic_installation = true,
     ensure_installed = {
@@ -118,22 +126,31 @@ function M.config()
           on_attach = on_attach,
           capabilities = capabilities,
           handlers = handlers,
-          flags = {
-            debounce_text_changes = 150,
-          },
+          flags = { debounce_text_changes = 150 },
         }
 
-        -- Try to load server-specific configuration
+        -- Load server-specific configuration if it exists
         local ok, server_opts = pcall(require, "plugins.lsp.servers." .. server_name)
         if ok then
           base_opts = vim.tbl_deep_extend("force", base_opts, server_opts)
         end
 
-        -- Set up the LSP server
+        -- Set up the LSP server with the combined options
         require("lspconfig")[server_name].setup(base_opts)
       end,
     },
   })
+
+  -- Set up non-Mason LSP servers
+  local non_mason_servers = { "ccls" }
+  for _, server in ipairs(non_mason_servers) do
+    require("lspconfig")[server].setup({
+      on_attach = on_attach,
+      capabilities = require("blink.cmp").get_lsp_capabilities(),
+      handlers = handlers,
+      flags = { debounce_text_changes = 150 },
+    })
+  end
 end
 
 return M

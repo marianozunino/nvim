@@ -20,6 +20,8 @@ return {
         go = { "gofumpt", "goimports-reviser", "golines" },
         cs = { "csharpier" },
         templ = { "templ" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
       },
       formatters = {
         csharpier = {

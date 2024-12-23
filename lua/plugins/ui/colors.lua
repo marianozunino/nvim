@@ -5,6 +5,8 @@ local M = {
     priority = 1000,
     config = function()
       vim.cmd("colorscheme nightfox")
+      vim.api.nvim_set_hl(0, "Visual", { bg = "#1f4b6d", fg = "#ffffff" })
+      vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#1f4b6d", fg = "#ffffff" })
     end,
   },
   {
