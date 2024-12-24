@@ -53,7 +53,7 @@ M.config = function()
       long_message_to_split = true,
       lsp_doc_border = true,
     },
-    throttle = 1000,
+    throttle = 0,
     views = {
       split = {
         enter = true,
@@ -72,8 +72,8 @@ M.config = function()
         position = { row = 2, col = 2 },
       },
       mini = {
-        timeout = 3000,
-        position = { row = -2 },
+        timeout = 1000,
+        position = { row = 2, col = "99%" }, -- Positions at top-right
         border = { style = "rounded" },
         win_options = {
           winblend = vim.api.nvim_get_option_value("winblend", { scope = "global" }),
