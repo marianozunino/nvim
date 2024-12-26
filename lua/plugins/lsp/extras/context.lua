@@ -14,6 +14,7 @@ M.config = function()
     depth_limit = 0,
     depth_limit_indicator = "..",
   })
+  vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
 end
 
 return M

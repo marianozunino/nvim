@@ -4,6 +4,7 @@ local M = {
     "saghen/blink.cmp",
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
+    require("plugins.lsp.extras.context"),
     require("plugins.lsp.extras.lazydev"),
     require("plugins.lsp.extras.gopher"),
     require("plugins.lsp.extras.typescript"),
