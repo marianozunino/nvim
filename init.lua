@@ -1,4 +1,4 @@
-require("utils")
+require("globals")
 
 require("config.options")
 require("config.remap")
