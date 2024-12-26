@@ -39,13 +39,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   command = [[%s/\s\+$//e]],
 })
 
--- Auto-apply chezmoi changes
-vim.api.nvim_create_autocmd("BufWritePost", {
-  group = MZuninoGroup,
-  pattern = "~/.local/share/chezmoi/*",
-  command = [[silent! !chezmoi apply --source-path "%"]],
-})
-
 -- Bigfile detection
 vim.filetype.add({
   pattern = {

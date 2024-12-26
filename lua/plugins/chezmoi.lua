@@ -23,12 +23,19 @@ return {
           on_apply = true, -- vim.notify on apply.
         },
       })
+
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
         pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
         callback = function()
           -- invoke with vim.schedule() for better startup time
           vim.schedule(require("chezmoi.commands.__edit").watch)
         end,
+      })
+
+      -- Auto-apply chezmoi changes
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        pattern = { os.getenv("HOME") .. "/.local/share/chezmoi/*" },
+        command = [[silent! !chezmoi apply --source-path "%"]],
       })
     end,
   },
