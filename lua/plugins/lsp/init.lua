@@ -130,7 +130,7 @@ function M.config()
         }
 
         -- Load server-specific configuration if it exists
-        local ok, server_opts = pcall(require, "plugins.lsp.servers." .. server_name)
+        local ok, server_opts = pcall(require, "config.lsp." .. server_name)
         if ok then
           base_opts = vim.tbl_deep_extend("force", base_opts, server_opts)
         end

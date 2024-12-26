@@ -1,5 +1,4 @@
 local M = {
-
   {
     "echasnovski/mini.icons",
     init = function()
