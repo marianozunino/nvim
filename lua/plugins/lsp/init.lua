@@ -32,6 +32,7 @@ end
 local function setup_keymaps(bufnr)
   local keymaps = {
     { "<C-h>", vim.lsp.buf.signature_help, "Signature Help" },
+    -- { "K", vim.lsp.buf.hover, "Hover Doc"},
     { "<leader>cw", vim.lsp.buf.rename, "Rename" },
     { "<leader>r", vim.lsp.buf.rename, "Rename" },
     { "vd", vim.diagnostic.open_float, "Open Diagnostics" },

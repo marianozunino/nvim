@@ -1,20 +1,15 @@
 local M = {
-  "SmiteshP/nvim-navic",
+  "nvimdev/lspsaga.nvim",
 }
 
 M.config = function()
-  require("nvim-navic").setup({
-    icons = icons.kind,
-    highlight = true,
-    lsp = {
-      auto_attach = true,
+  require("lspsaga").setup({
+    lightbulb = {
+      enable = false,
     },
-    click = true,
-    separator = " " .. icons.ui.ChevronRight .. " ",
-    depth_limit = 0,
-    depth_limit_indicator = "..",
   })
-  vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+  nmap("K", "<cmd>Lspsaga hover_doc<cr>")
+  nmap("pd", "<cmd>Lspsaga peek_definition<cr>")
 end
 
 return M

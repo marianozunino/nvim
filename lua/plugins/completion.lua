@@ -25,6 +25,13 @@ M.config = function()
       nerd_font_variant = "mono",
     },
 
+    sources = {
+      default = { "lsp", "path", "snippets", "buffer", "dadbod" },
+      providers = {
+        dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+      },
+    },
+
     signature = {
       enabled = true,
       window = {
@@ -34,11 +41,10 @@ M.config = function()
 
     completion = {
       list = {
-        -- Controls how the completion items are selected
-        -- 'preselect' will automatically select the first item in the completion list
-        -- 'manual' will not select any item by default
-        -- 'auto_insert' will not select any item by default, and insert the completion items automatically when selecting them
-        selection = "auto_insert",
+        selection = {
+          auto_insert = true,
+          preselect = false,
+        },
       },
       menu = {
         border = "single",
@@ -61,10 +67,6 @@ M.config = function()
     },
 
     fuzzy = {
-      -- When enabled, allows for a number of typos relative to the length of the query
-      -- Disabling this matches the behavior of fzf
-      use_typo_resistance = true,
-
       -- Frecency tracks the most recently/frequently used items and boosts the score of the item
       use_frecency = true,
 

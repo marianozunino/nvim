@@ -24,7 +24,6 @@ M.config = function()
     },
   })
 
-  nmap("K", vim.lsp.buf.hover, { desc = "Hover Documentation" })
   nmap("gd", function()
     fzf_lua.lsp_definitions({ jump_to_single_result = true })
   end, { desc = "Goto Definition" })
