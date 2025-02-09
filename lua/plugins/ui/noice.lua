@@ -53,7 +53,6 @@ M.config = function()
       long_message_to_split = true,
       lsp_doc_border = true,
     },
-    throttle = 0,
     views = {
       split = {
         enter = true,

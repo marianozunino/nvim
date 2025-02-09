@@ -9,6 +9,7 @@ return {
       formatters_by_ft = {
         graphql = { "prettierd", "prettier" },
         njk = { "prettierd", "prettier" },
+        svelte = { lsp_format = "fallback" },
         html = { "prettierd", "prettier" },
         typescript = { "prettierd", "prettier" },
         lua = { "stylua" },
