@@ -80,6 +80,7 @@ function M.config()
     "omnisharp",
     "vtsls",
     "yaml-language-server",
+    "svelte-language-server",
 
     -- Formatters
     "prettierd",
@@ -87,6 +88,7 @@ function M.config()
     "stylua",
     "latexindent",
     "clang-format",
+    "csharpier",
 
     -- Additional tools
     "eslint_d",
