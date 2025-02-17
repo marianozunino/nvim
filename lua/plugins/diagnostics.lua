@@ -74,7 +74,7 @@ function M.config()
     position = "bottom",
     height = 10,
     width = 50,
-    icons = true,
+    -- icons = false,
     mode = "workspace_diagnostics",
     fold_open = "",
     fold_closed = "",
@@ -100,14 +100,14 @@ function M.config()
     auto_preview = true,
     auto_fold = false,
     auto_jump = { "lsp_definitions" },
-    signs = {
-      -- Icons / text used for a diagnostic
-      error = "",
-      warning = "",
-      hint = "",
-      information = "",
-      other = "",
-    },
+    -- signs = {
+    --   -- Icons / text used for a diagnostic
+    --   error = "",
+    --   warning = "",
+    --   hint = "",
+    --   information = "",
+    --   other = "",
+    -- },
     use_diagnostic_signs = false,
   })
 
