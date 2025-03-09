@@ -1,13 +1,13 @@
 return {
-  "olexsmir/gopher.nvim",
+  "ray-x/go.nvim",
   ft = "go",
   config = function(_, opts)
-    require("gopher").setup(opts)
-    vim.keymap.set("n", "<leader>gmt", ":GoMod tidy<cr>", {
+    require("go").setup(opts)
+    vim.keymap.set("n", "<leader>gmt", ":GoModTidy<cr>", {
       desc = "[Go] Tidy",
     })
   end,
   build = function()
-    vim.cmd([[silent! GoInstallDeps]])
+    vim.cmd([[silent! GoModTidy]])
   end,
 }
