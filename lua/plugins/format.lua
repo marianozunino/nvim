@@ -23,6 +23,7 @@ return {
         templ = { "templ" },
         c = { "clang-format" },
         cpp = { "clang-format" },
+        hcl = { "hcl" },
       },
       formatters = {
         csharpier = {
