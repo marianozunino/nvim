@@ -24,6 +24,9 @@ return {
         c = { "clang-format" },
         cpp = { "clang-format" },
         hcl = { "hcl" },
+        toml = { "taplo" },
+        htmlhugo = { "prettier" },
+        markdown = { "prettier" },
       },
       formatters = {
         csharpier = {
@@ -38,5 +41,11 @@ return {
       },
       notify_on_error = false,
     })
+    vim.api.nvim_set_keymap(
+      "n",
+      "<leader>cf",
+      '<cmd>lua require("conform").format()<CR>',
+      { noremap = true, silent = true }
+    )
   end,
 }

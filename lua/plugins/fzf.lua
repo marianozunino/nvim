@@ -47,6 +47,7 @@ M.config = function()
     "dist",
     "build",
     "coverage",
+    "public",
   }
 
   local exclude_opts = ""
