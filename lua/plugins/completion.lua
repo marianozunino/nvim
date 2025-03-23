@@ -18,6 +18,7 @@ M.config = function()
 
       ["<C-k>"] = { "select_prev", "fallback" },
       ["<C-j>"] = { "select_next", "fallback" },
+      ["<Tab>"] = { "fallback" },
     },
 
     appearance = {
@@ -65,6 +66,9 @@ M.config = function()
             },
           },
         },
+        auto_show = function(ctx)
+          return ctx.mode ~= "default"
+        end,
       },
     },
 
