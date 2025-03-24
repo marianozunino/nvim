@@ -30,9 +30,22 @@ end
 
 -- Set up key mappings for LSP functionality
 local function setup_keymaps(bufnr)
+  local BORDER = "rounded"
   local keymaps = {
-    { "<C-h>", vim.lsp.buf.signature_help, "Signature Help" },
-    -- { "K", vim.lsp.buf.hover, "Hover Doc"},
+    {
+      "<C-h>",
+      function()
+        vim.lsp.buf.signature_help({ border = BORDER })
+      end,
+      "Signature Help",
+    },
+    {
+      "K",
+      function()
+        vim.lsp.buf.hover({ border = BORDER })
+      end,
+      "Hover Doc",
+    },
     { "<leader>cw", vim.lsp.buf.rename, "Rename" },
     { "<leader>r", vim.lsp.buf.rename, "Rename" },
     { "vd", vim.diagnostic.open_float, "Open Diagnostics" },
@@ -49,18 +62,27 @@ local function setup_keymaps(bufnr)
 end
 
 -- Function called when LSP attaches to a buffer
-local function on_attach(client, bufnr)
+function M.on_attach(client, bufnr)
   setup_autocommands(client, bufnr)
   setup_keymaps(bufnr)
 end
 
-local BORDER = "rounded"
+-- Function to get common LSP configuration
+function M.get_common_config()
+  local capabilities = require("blink.cmp").get_lsp_capabilities()
 
--- Customize hover and signature help handlers
-local handlers = {
-  ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = BORDER }),
-  ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = BORDER }),
-}
+  -- Enable folding capabilities
+  capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true,
+  }
+
+  return {
+    on_attach = M.on_attach,
+    capabilities = capabilities,
+    flags = { debounce_text_changes = 150 },
+  }
+end
 
 function M.config()
   -- Set up Mason
@@ -78,7 +100,6 @@ function M.config()
     "json-lsp",
     "lua-language-server",
     "omnisharp",
-    "vtsls",
     "yaml-language-server",
     "svelte-language-server",
 
@@ -118,20 +139,7 @@ function M.config()
     },
     handlers = {
       function(server_name)
-        local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-        -- Enable folding capabilities
-        capabilities.textDocument.foldingRange = {
-          dynamicRegistration = false,
-          lineFoldingOnly = true,
-        }
-
-        local base_opts = {
-          on_attach = on_attach,
-          capabilities = capabilities,
-          handlers = handlers,
-          flags = { debounce_text_changes = 150 },
-        }
+        local base_opts = M.get_common_config()
 
         -- Load server-specific configuration if it exists
         local ok, server_opts = pcall(require, "config.lsp." .. server_name)
@@ -148,12 +156,7 @@ function M.config()
   -- Set up non-Mason LSP servers
   local non_mason_servers = { "ccls" }
   for _, server in ipairs(non_mason_servers) do
-    require("lspconfig")[server].setup({
-      on_attach = on_attach,
-      capabilities = require("blink.cmp").get_lsp_capabilities(),
-      handlers = handlers,
-      flags = { debounce_text_changes = 150 },
-    })
+    require("lspconfig")[server].setup(M.get_common_config())
   end
 end
 

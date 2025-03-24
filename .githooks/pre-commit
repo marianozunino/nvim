@@ -1,0 +1,14 @@
+#!/bin/bash
+STYLUA_PATH="$HOME/.local/share/nvim/mason/bin/stylua"
+
+if [[ -x "$STYLUA_PATH" ]]; then
+  LUA_FILES=$(git diff --cached --name-only --diff-filter=AM | grep '\.lua$')
+
+  if [ -n "$LUA_FILES" ]; then
+    echo "$LUA_FILES" | xargs "$STYLUA_PATH"
+    echo "$LUA_FILES" | xargs git add
+  fi
+else
+  echo "Error: stylua not found. Please install it via Mason."
+  exit 1
+fi

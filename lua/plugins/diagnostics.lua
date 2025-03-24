@@ -5,8 +5,13 @@ local M = {
 
 local function setup_keymaps(trouble)
   -- Diagnostic navigation
-  nmap("[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
-  nmap("]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+  nmap("[d", function()
+    vim.diagnostic.jump({ count = -1, float = true })
+  end, { desc = "Previous diagnostic" })
+
+  nmap("]d", function()
+    vim.diagnostic.jump({ count = 1, float = true })
+  end, { desc = "Next diagnostic" })
 
   -- Trouble specific navigation
   nmap("<a-k>", function()
