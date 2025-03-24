@@ -25,8 +25,8 @@ return {
         cpp = { "clang-format" },
         hcl = { "hcl" },
         toml = { "taplo" },
-        htmlhugo = { "prettier" },
-        markdown = { "prettier" },
+        htmlhugo = { "prettierd", "prettier" },
+        markdown = { "prettierd", "prettier" },
       },
       formatters = {
         csharpier = {

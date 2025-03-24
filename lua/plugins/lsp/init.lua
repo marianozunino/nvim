@@ -110,9 +110,9 @@ function M.config()
     "latexindent",
     "clang-format",
     "csharpier",
+    "quick-lint-js",
 
     -- Additional tools
-    "eslint_d",
     "templ",
   }
 
