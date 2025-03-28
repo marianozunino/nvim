@@ -2,10 +2,47 @@ local M = {
   {
     "tpope/vim-fugitive",
     config = function()
-      print("Magic")
-      -- For init.lua
+      local git_status = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        if vim.b[bufnr].fugitive_status then
+          local winnr = vim.fn.bufwinid(bufnr)
+          vim.api.nvim_win_close(winnr, true)
+        else
+          vim.cmd("G")
+        end
+      end
+
       vim.g.fugitive_git_executable = "env GPG_TTY=$(tty) git"
       vim.env.GPG_TTY = vim.fn.system("tty"):gsub("\n", "")
+
+      nmap("<leader>lg", ":G<cr>", { desc = "Git Status" })
+      nmap("<leader>gs", git_status, { desc = "Toggle Git Status" })
+      nmap("gs", git_status, { desc = "Toggle Git Status" })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "fugitive", "fugitiveblame", "fugitive-status" },
+        callback = function()
+          nmap("P", function()
+            local cmd = "git push --force-with-lease"
+            vim.notify("Pushing...", vim.log.levels.INFO)
+            vim.fn.jobstart(cmd, {
+              on_exit = function(_, code)
+                if code == 0 then
+                  vim.notify("Push completed successfully", vim.log.levels.INFO)
+                else
+                  vim.notify("Push failed with exit code: " .. code, vim.log.levels.ERROR)
+                end
+              end,
+              detach = true,
+            })
+          end, { buffer = true, desc = "Git Push Force With Lease (Async)" })
+
+          nmap("<C-c>", function()
+            local win_id = vim.api.nvim_get_current_win()
+            vim.api.nvim_win_close(win_id, false)
+          end, { buffer = true, desc = "Close window" })
+        end,
+      })
     end,
   },
   {
