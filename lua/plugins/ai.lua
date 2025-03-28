@@ -9,18 +9,17 @@ local M = {
 M.config = function()
   local neocodeium = require("neocodeium")
   local blink = require("blink.cmp")
-  neocodeium.setup()
+
+  neocodeium.setup({
+    filter = function()
+      return not blink.is_visible()
+    end,
+  })
 
   vim.api.nvim_create_autocmd("User", {
     pattern = "BlinkCmpMenuOpen",
     callback = function()
       neocodeium.clear()
-    end,
-  })
-
-  neocodeium.setup({
-    filter = function()
-      return not blink.is_visible()
     end,
   })
 

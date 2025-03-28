@@ -1,6 +1,7 @@
 local M = {
   "saghen/blink.cmp",
   dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
+
   version = "v1.*",
 }
 
@@ -18,7 +19,6 @@ M.config = function()
 
       ["<C-k>"] = { "select_prev", "fallback" },
       ["<C-j>"] = { "select_next", "fallback" },
-      ["<Tab>"] = { "fallback" },
     },
 
     appearance = {
