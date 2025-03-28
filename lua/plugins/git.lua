@@ -1,5 +1,14 @@
 local M = {
   {
+    "tpope/vim-fugitive",
+    config = function()
+      print("Magic")
+      -- For init.lua
+      vim.g.fugitive_git_executable = "env GPG_TTY=$(tty) git"
+      vim.env.GPG_TTY = vim.fn.system("tty"):gsub("\n", "")
+    end,
+  },
+  {
     "lewis6991/gitsigns.nvim",
     config = function()
       require("gitsigns").setup({

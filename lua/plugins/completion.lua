@@ -1,7 +1,7 @@
 local M = {
   "saghen/blink.cmp",
   dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
-  version = "v0.*",
+  version = "v1.*",
 }
 
 M.config = function()
