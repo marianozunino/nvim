@@ -1,5 +1,5 @@
 return {
-  dir = "/home/forbi/Dev/marianozunino/presenterm.nvim",
+  "marianozunino/presenterm.nvim",
   config = function()
     require("presenterm").setup({
       patterns = {

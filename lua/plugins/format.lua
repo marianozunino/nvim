@@ -12,9 +12,12 @@ return {
         svelte = { lsp_format = "fallback" },
         html = { "prettierd", "prettier" },
         typescript = { "prettierd", "prettier" },
-        lua = { "stylua" },
+        typescriptreact = { "prettierd", "prettier" },
         javascript = { "prettierd", "prettier", stop_after_first = true },
         json = { "prettierd", "prettier" },
+        htmlhugo = { "prettierd", "prettier" },
+        markdown = { "prettierd", "prettier" },
+        lua = { "stylua" },
         sh = { "shfmt" },
         bash = { "shfmt" },
         tex = { "latexindent" },
@@ -25,8 +28,6 @@ return {
         cpp = { "clang-format" },
         hcl = { "hcl" },
         toml = { "taplo" },
-        htmlhugo = { "prettierd", "prettier" },
-        markdown = { "prettierd", "prettier" },
       },
       formatters = {
         csharpier = {

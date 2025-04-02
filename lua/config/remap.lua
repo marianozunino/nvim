@@ -39,9 +39,9 @@ end, { desc = "Quit all" })
 
 -- create a user command to save without formatting :noa w
 vim.api.nvim_create_user_command("W", function()
-  -- if buffer is empty, don't save
   if vim.fn.empty(vim.fn.expand("%:t")) == 1 then
-    return vim.notify("Buffer is empty, not saving", vim.log.levels.ERROR)
+    Snacks.notifier.notify("Buffer is empty, not saving", vim.log.levels.ERROR)
+    return
   end
   vim.api.nvim_command("noa w")
 end, { nargs = 0, desc = "Save without formatting" })

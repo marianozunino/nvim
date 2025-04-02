@@ -28,6 +28,11 @@ local M = {
       require("mini.surround").setup({})
     end,
   },
+  {
+    "echasnovski/mini.statusline",
+    version = false,
+    opts = {},
+  },
 }
 
 return M
