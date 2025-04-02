@@ -2,11 +2,13 @@ local M = {
   "neovim/nvim-lspconfig",
   dependencies = {
     "saghen/blink.cmp",
+
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    { "j-hui/fidget.nvim", opts = {} },
     require("plugins.lsp.extras.lazydev"),
     require("plugins.lsp.extras.gopher"),
-    require("plugins.lsp.extras.typescript"),
   },
 }
 
@@ -93,6 +95,9 @@ function M.config()
   local ensure_installed = {
     -- LSP servers
     "gopls",
+    "jsonls",
+    "lua_ls",
+    "yamlls",
     "graphql-language-service-cli",
     "html-lsp",
     "htmx-lsp",
@@ -101,6 +106,7 @@ function M.config()
     "omnisharp",
     "yaml-language-server",
     "svelte-language-server",
+    "vtsls",
 
     -- Formatters
     "prettierd",
@@ -115,27 +121,12 @@ function M.config()
     "templ",
   }
 
-  -- Install missing tools
-  local registry = require("mason-registry")
-  for _, tool in ipairs(ensure_installed) do
-    if not registry.is_installed(tool) then
-      vim.cmd("MasonInstall " .. tool)
-    end
-  end
+  require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
   -- Set up Mason LSP config
   require("mason-lspconfig").setup({
-    automatic_installation = true,
-    ensure_installed = {
-      "gopls",
-      "html",
-      "htmx",
-      "jsonls",
-      "lua_ls",
-      "omnisharp",
-      "yamlls",
-      "graphql",
-    },
+    ensure_installed = {}, -- explicitly set to an empty table (populated via mason-tool-installer)
+    automatic_installation = false,
     handlers = {
       function(server_name)
         local base_opts = M.get_common_config()

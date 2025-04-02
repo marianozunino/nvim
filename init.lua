@@ -1,3 +1,7 @@
+-- Fuck off with the warnings...
+---@diagnostic disable-next-line: duplicate-set-field
+vim.deprecate = function() end
+
 require("globals")
 require("config.options")
 require("config.remap")

@@ -1,59 +1,69 @@
 local M = {
-  "folke/trouble.nvim",
-  branch = "main",
+  "stevearc/quicker.nvim",
+  -- Set plugin to load on VimEnter instead of FileType qf to ensure diagnostics are configured early
+  event = { "VimEnter" },
+  -- Add an explicit dependency for diagnostics loading
+  dependencies = { "nvim-lspconfig" }, -- Assuming you're using nvim-lspconfig
 }
 
-local function setup_keymaps(trouble)
-  -- Diagnostic navigation
-  nmap("[d", function()
-    vim.diagnostic.jump({ count = -1, float = true })
-  end, { desc = "Previous diagnostic" })
+-- Move sign registration outside of the config function to ensure it runs early
+local function register_diagnostic_signs()
+  -- Define diagnostic sign icons
+  local sign_icons = {
+    [vim.diagnostic.severity.ERROR] = "󰅙", -- Alternative error symbol
+    [vim.diagnostic.severity.WARN] = "󱈸", -- Alternative warning
+    [vim.diagnostic.severity.HINT] = "󰮱", -- Star for hints
+    [vim.diagnostic.severity.INFO] = "󰋼", -- Info circle
+  }
 
-  nmap("]d", function()
-    vim.diagnostic.jump({ count = 1, float = true })
-  end, { desc = "Next diagnostic" })
+  -- Register signs explicitly
+  for severity, icon in pairs(sign_icons) do
+    local name = "DiagnosticSign" .. vim.diagnostic.severity[severity]
+    vim.fn.sign_define(name, { text = icon, texthl = name })
+  end
 
-  -- Trouble specific navigation
-  nmap("<a-k>", function()
-    trouble.previous({ skip_groups = true, jump = true })
-  end, { desc = "Previous trouble item" })
-  nmap("<a-j>", function()
-    trouble.next({ skip_groups = true, jump = true })
-  end, { desc = "Next trouble item" })
+  -- Set sign highlights for better visibility
+  vim.cmd([[
+    highlight DiagnosticSignError guifg=#f7768e gui=bold
+    highlight DiagnosticSignWarn guifg=#e0af68 gui=bold
+    highlight DiagnosticSignInfo guifg=#7dcfff gui=bold
+    highlight DiagnosticSignHint guifg=#9ece6a gui=bold
+  ]])
+end
 
-  -- Trouble mode toggles
-  nmap("<leader>tt", "<cmd>TroubleToggle<cr>", { desc = "Toggle trouble" })
-  nmap("<leader>tw", "<cmd>TroubleToggle workspace_diagnostics<cr>", { desc = "Workspace diagnostics" })
-  nmap("<leader>td", "<cmd>TroubleToggle document_diagnostics<cr>", { desc = "Document diagnostics" })
-  nmap("<leader>tq", "<cmd>TroubleToggle quickfix<cr>", { desc = "Quickfix list" })
-  nmap("<leader>tl", "<cmd>TroubleToggle loclist<cr>", { desc = "Location list" })
+-- This will now be called during setup() which happens at init
+M.init = function()
+  register_diagnostic_signs()
 end
 
 local function setup_diagnostic_config()
+  -- Define prettier diagnostic icons
+  local diagnostic_icons = {
+    [vim.diagnostic.severity.ERROR] = "󰅚", -- More prominent error symbol
+    [vim.diagnostic.severity.WARN] = "󰀦", -- Warning triangle
+    [vim.diagnostic.severity.HINT] = "󰌵", -- Lightbulb for hints
+    [vim.diagnostic.severity.INFO] = "󰋽", -- Information symbol
+  }
+
+  -- Configure diagnostics
   vim.diagnostic.config({
     virtual_text = {
       prefix = "●",
       suffix = "",
       format = function(diagnostic)
-        local icons = {
-          [vim.diagnostic.severity.ERROR] = " ",
-          [vim.diagnostic.severity.WARN] = " ",
-          [vim.diagnostic.severity.HINT] = " ",
-          [vim.diagnostic.severity.INFO] = " ",
-        }
-        local icon = icons[diagnostic.severity] or ""
+        local icon = diagnostic_icons[diagnostic.severity] or ""
         return string.format("%s %s", icon, diagnostic.message)
       end,
     },
-    underline = false,
+    underline = true, -- Enable underline for better visibility
     update_in_insert = false,
     signs = {
       active = true,
       text = {
-        [vim.diagnostic.severity.ERROR] = "",
-        [vim.diagnostic.severity.WARN] = "",
-        [vim.diagnostic.severity.HINT] = "",
-        [vim.diagnostic.severity.INFO] = "",
+        [vim.diagnostic.severity.ERROR] = "󰅙", -- Alternative error symbol
+        [vim.diagnostic.severity.WARN] = "󱈸", -- Alternative warning
+        [vim.diagnostic.severity.HINT] = "󰮱", -- Star for hints
+        [vim.diagnostic.severity.INFO] = "󰋼", -- Info circle
       },
     },
     float = {
@@ -65,62 +75,72 @@ local function setup_diagnostic_config()
       prefix = "",
       format = function(diagnostic)
         local severity = vim.diagnostic.severity[diagnostic.severity]
-        return string.format("%s: %s", severity:lower(), diagnostic.message)
+        local icon = diagnostic_icons[diagnostic.severity] or ""
+        return string.format("%s %s: %s", icon, severity:lower(), diagnostic.message)
       end,
     },
     severity_sort = true,
   })
 end
 
+local function cycle_qf(cmd)
+  local qf_list_empty = vim.fn.getqflist({ size = 0 }).size == 0
+  if qf_list_empty then
+    return
+  end
+  local current_qf = vim.fn.getqflist({ idx = 0 }).idx
+  local qf_size = vim.fn.getqflist({ size = 0 }).size
+  if cmd == "next" then
+    if current_qf == qf_size then
+      vim.cmd("cfirst")
+    else
+      vim.cmd("cnext")
+    end
+  elseif cmd == "prev" then
+    if current_qf == 1 then
+      vim.cmd("clast")
+    else
+      vim.cmd("cprev")
+    end
+  end
+end
+
 function M.config()
-  local trouble = require("trouble")
-
-  trouble.setup({
-    position = "bottom",
-    height = 10,
-    width = 50,
-    -- icons = false,
-    mode = "workspace_diagnostics",
-    fold_open = "",
-    fold_closed = "",
-    group = true,
-    padding = true,
-    action_keys = {
-      close = "q", -- close the list
-      cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
-      refresh = "r", -- manually refresh
-      jump = { "<cr>", "<tab>" }, -- jump to the diagnostic or open / close folds
-      open_split = { "<c-x>" }, -- open buffer in new split
-      open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
-      open_tab = { "<c-t>" }, -- open buffer in new tab
-      toggle_mode = "m", -- toggle between "workspace" and "document" mode
-      toggle_preview = "P", -- toggle auto_preview
-      preview = "p", -- preview the diagnostic location
-      close_folds = { "zM", "zm" }, -- close all folds
-      open_folds = { "zR", "zr" }, -- open all folds
-      toggle_fold = { "zA", "za" }, -- toggle fold of current file
-      previous = "k", -- previous item
-      next = "j", -- next item
+  local opts = {
+    keys = {
+      {
+        ">",
+        function()
+          require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+        end,
+        desc = "Expand quickfix context",
+      },
+      {
+        "<",
+        function()
+          require("quicker").collapse()
+        end,
+        desc = "Collapse quickfix context",
+      },
     },
-    auto_preview = true,
-    auto_fold = false,
-    auto_jump = { "lsp_definitions" },
-    -- signs = {
-    --   -- Icons / text used for a diagnostic
-    --   error = "",
-    --   warning = "",
-    --   hint = "",
-    --   information = "",
-    --   other = "",
-    -- },
-    use_diagnostic_signs = false,
-  })
-
-  -- Setup keymaps
-  setup_keymaps(trouble)
-
-  -- Setup diagnostic configuration
+    type_icons = {
+      E = "󰅚 ", -- Error
+      W = "󰀦 ", -- Warning
+      I = "󰋽 ", -- Info
+      N = "󰎚 ", -- Note
+      H = "󰌵 ", -- Hint
+    },
+  }
+  require("quicker").setup(opts)
   setup_diagnostic_config()
+
+  -- Replace the existing mappings with the cycling versions
+  nmap("<a-j>", function()
+    cycle_qf("next")
+  end, { desc = "Next quickfix item (cycles)" })
+  nmap("<a-k>", function()
+    cycle_qf("prev")
+  end, { desc = "Previous quickfix item (cycles)" })
 end
 
 return M

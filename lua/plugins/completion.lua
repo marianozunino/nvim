@@ -1,8 +1,11 @@
 local M = {
   "saghen/blink.cmp",
-  dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
-
-  version = "v1.*",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    { "L3MON4D3/LuaSnip", version = "v2.*" },
+    "folke/lazydev.nvim",
+  },
+  version = "*",
 }
 
 M.config = function()
@@ -26,19 +29,22 @@ M.config = function()
       nerd_font_variant = "mono",
     },
 
-    snippets = { preset = "luasnip" },
+    snippets = {
+      preset = "luasnip",
+    },
 
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "dadbod" },
+      default = { "lsp", "path", "snippets", "buffer", "dadbod", "lazydev" },
       providers = {
         dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+        lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
       },
     },
 
     signature = {
       enabled = true,
       window = {
-        border = "single",
+        border = "rounded",
       },
     },
 
@@ -50,7 +56,7 @@ M.config = function()
         },
       },
       menu = {
-        border = "single",
+        border = "rounded",
         draw = {
           components = {
             kind_icon = {
@@ -69,6 +75,10 @@ M.config = function()
         auto_show = function(ctx)
           return ctx.mode ~= "default"
         end,
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200,
       },
     },
 

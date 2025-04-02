@@ -3,10 +3,6 @@ local M = {
 }
 
 M.config = function()
-  local config = require("fzf-lua.config")
-  local actions = require("trouble.sources.fzf").actions
-  config.defaults.actions.files["ctrl-q"] = actions.open
-
   local fzf_lua = require("fzf-lua")
 
   -- Basic fzf-lua setup
