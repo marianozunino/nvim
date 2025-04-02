@@ -24,13 +24,13 @@ local M = {
         callback = function()
           nmap("P", function()
             local cmd = "git push --force-with-lease"
-            vim.notify("Pushing...", vim.log.levels.INFO)
+            Snacks.notifier.notify("Pushing...", vim.log.levels.INFO)
             vim.fn.jobstart(cmd, {
               on_exit = function(_, code)
                 if code == 0 then
-                  vim.notify("Push completed successfully", vim.log.levels.INFO)
+                  Snacks.notifier.notify("Push completed successfully", vim.log.levels.INFO)
                 else
-                  vim.notify("Push failed with exit code: " .. code, vim.log.levels.ERROR)
+                  Snacks.notifier.notify("Push failed with exit code: " .. code, vim.log.levels.ERROR)
                 end
               end,
               detach = true,
@@ -40,6 +40,22 @@ local M = {
           nmap("<C-c>", function()
             local win_id = vim.api.nvim_get_current_win()
             vim.api.nvim_win_close(win_id, false)
+          end, { buffer = true, desc = "Close window" })
+
+          -- Git Pull
+          nmap("gp", function()
+            local cmd = "git pull"
+            Snacks.notifier.notify("Pulling...", vim.log.levels.INFO)
+            vim.fn.jobstart(cmd, {
+              on_exit = function(_, code)
+                if code == 0 then
+                  Snacks.notifier.notify("Pull completed successfully", vim.log.levels.INFO)
+                else
+                  Snacks.notifier.notify("Pull failed with exit code: " .. code, vim.log.levels.ERROR)
+                end
+              end,
+              detach = true,
+            })
           end, { buffer = true, desc = "Close window" })
         end,
       })

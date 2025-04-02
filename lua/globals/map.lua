@@ -15,3 +15,13 @@ end
 _G.vmap = function(keys, func, opts)
   _G.map("v", keys, func, opts)
 end
+
+_G.dd = function(...)
+  Snacks.debug.inspect(...)
+end
+
+_G.bt = function()
+  Snacks.debug.backtrace()
+end
+
+vim.print = _G.dd

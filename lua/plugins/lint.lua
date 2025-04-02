@@ -10,10 +10,12 @@ M.config = function()
   local lint = require("lint")
 
   lint.linters_by_ft = {
-    javascript = {},
-    typescript = {},
-    javascriptreact = {},
-    typescriptreact = {},
+    -- fuck this shit, 1.5Gb of RAM for this crap
+    --
+    -- javascript = {"eslint_d"},
+    -- typescript = {"eslint_d"},
+    -- javascriptreact = {"eslint_d"},
+    -- typescriptreact = {"eslint_d"},
   }
 
   local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

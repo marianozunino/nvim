@@ -1,13 +1,10 @@
 local M = {
-  "Exafunction/codeium.vim",
-  cmd = "Codeium",
-  keys = {
-    { "<leader>ce", "<cmd>Codeium Toggle<cr>", desc = "Codeium Enable" },
-  },
+  "Exafunction/windsurf.vim",
 }
 
 M.config = function()
   vim.g.codeium_disable_bindings = 1
+  vim.g.codeium_enabled = 0
 
   imap("<C-g>", function()
     return vim.fn["codeium#Accept"]()
@@ -24,6 +21,11 @@ M.config = function()
   imap("<c-x>", function()
     return vim.fn["codeium#Clear"]()
   end, { expr = true, silent = true, desc = "[codeium] Clear" })
+
+  nmap("<leader>ce", function()
+    vim.cmd("Codeium Toggle")
+    Snacks.notifier.notify("Codeium " .. (vim.g.codeium_enabled == 1 and "enabled" or "disabled"))
+  end, { expr = true, silent = true, desc = "[codeium] Toggle" })
 end
 
 return M
