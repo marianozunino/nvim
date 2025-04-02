@@ -1,7 +1,6 @@
 -- Create autogroups first
 local MZuninoGroup = vim.api.nvim_create_augroup("mzunino", {})
 local yank_group = vim.api.nvim_create_augroup("HighlightYank", {})
-local bigfile_group = vim.api.nvim_create_augroup("bigfile", {})
 
 -- Set bigfile size threshold
 vim.g.bigfile_size = 1024 * 1024 * 1.5 -- 1.5 MB
@@ -49,16 +48,4 @@ vim.filetype.add({
       end,
     },
   },
-})
-
--- Bigfile handling
-vim.api.nvim_create_autocmd("FileType", {
-  group = bigfile_group,
-  pattern = "bigfile",
-  callback = function(ev)
-    vim.b.minianimate_disable = true
-    vim.schedule(function()
-      vim.bo[ev.buf].syntax = vim.filetype.match({ buf = ev.buf }) or ""
-    end)
-  end,
 })
