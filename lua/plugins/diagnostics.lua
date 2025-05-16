@@ -1,28 +1,20 @@
 local M = {
   "stevearc/quicker.nvim",
-  -- Set plugin to load on VimEnter instead of FileType qf to ensure diagnostics are configured early
-  event = { "VimEnter" },
-  -- Add an explicit dependency for diagnostics loading
-  dependencies = { "nvim-lspconfig" }, -- Assuming you're using nvim-lspconfig
+  event = "VimEnter",
+  dependencies = { "neovim/nvim-lspconfig" },
 }
 
--- Move sign registration outside of the config function to ensure it runs early
-local function register_diagnostic_signs()
-  -- Define diagnostic sign icons
-  local sign_icons = {
-    [vim.diagnostic.severity.ERROR] = "󰅙", -- Alternative error symbol
-    [vim.diagnostic.severity.WARN] = "󱈸", -- Alternative warning
-    [vim.diagnostic.severity.HINT] = "󰮱", -- Star for hints
-    [vim.diagnostic.severity.INFO] = "󰋼", -- Info circle
-  }
-
-  -- Register signs explicitly
-  for severity, icon in pairs(sign_icons) do
+M.init = function()
+  for severity, icon in pairs({
+    [vim.diagnostic.severity.ERROR] = icons.diagnostics.Error,
+    [vim.diagnostic.severity.WARN] = icons.diagnostics.Warning,
+    [vim.diagnostic.severity.INFO] = icons.diagnostics.Information,
+    [vim.diagnostic.severity.HINT] = icons.diagnostics.Hint,
+  }) do
     local name = "DiagnosticSign" .. vim.diagnostic.severity[severity]
     vim.fn.sign_define(name, { text = icon, texthl = name })
   end
 
-  -- Set sign highlights for better visibility
   vim.cmd([[
     highlight DiagnosticSignError guifg=#f7768e gui=bold
     highlight DiagnosticSignWarn guifg=#e0af68 gui=bold
@@ -31,39 +23,38 @@ local function register_diagnostic_signs()
   ]])
 end
 
--- This will now be called during setup() which happens at init
-M.init = function()
-  register_diagnostic_signs()
+-- Cycle through quickfix items
+local function cycle_qf(cmd)
+  local qf = vim.fn.getqflist({ size = 0, idx = 0 })
+  if qf.size == 0 then
+    return
+  end
+  if cmd == "next" then
+    vim.cmd(qf.idx == qf.size and "cfirst" or "cnext")
+  elseif cmd == "prev" then
+    vim.cmd(qf.idx == 1 and "clast" or "cprev")
+  end
 end
 
-local function setup_diagnostic_config()
-  -- Define prettier diagnostic icons
-  local diagnostic_icons = {
-    [vim.diagnostic.severity.ERROR] = "󰅚", -- More prominent error symbol
-    [vim.diagnostic.severity.WARN] = "󰀦", -- Warning triangle
-    [vim.diagnostic.severity.HINT] = "󰌵", -- Lightbulb for hints
-    [vim.diagnostic.severity.INFO] = "󰋽", -- Information symbol
-  }
-
-  -- Configure diagnostics
+function M.config()
+  -- Diagnostic configuration using _G.icons.diagnostics
+  -- local icons = _G.icons.diagnostics
   vim.diagnostic.config({
     virtual_text = {
       prefix = "●",
-      suffix = "",
-      format = function(diagnostic)
-        local icon = diagnostic_icons[diagnostic.severity] or ""
-        return string.format("%s %s", icon, diagnostic.message)
+      format = function(d)
+        return string.format("%s %s", icons[vim.diagnostic.severity[d.severity]], d.message)
       end,
     },
-    underline = true, -- Enable underline for better visibility
+    underline = true,
     update_in_insert = false,
     signs = {
       active = true,
       text = {
-        [vim.diagnostic.severity.ERROR] = "󰅙", -- Alternative error symbol
-        [vim.diagnostic.severity.WARN] = "󱈸", -- Alternative warning
-        [vim.diagnostic.severity.HINT] = "󰮱", -- Star for hints
-        [vim.diagnostic.severity.INFO] = "󰋼", -- Info circle
+        [vim.diagnostic.severity.ERROR] = icons.diagnostics.Error,
+        [vim.diagnostic.severity.WARN] = icons.diagnostics.Warning,
+        [vim.diagnostic.severity.INFO] = icons.diagnostics.Information,
+        [vim.diagnostic.severity.HINT] = icons.diagnostics.Hint,
       },
     },
     float = {
@@ -71,42 +62,20 @@ local function setup_diagnostic_config()
       style = "minimal",
       border = "rounded",
       source = true,
-      header = "",
-      prefix = "",
-      format = function(diagnostic)
-        local severity = vim.diagnostic.severity[diagnostic.severity]
-        local icon = diagnostic_icons[diagnostic.severity] or ""
-        return string.format("%s %s: %s", icon, severity:lower(), diagnostic.message)
+      format = function(d)
+        return string.format(
+          "%s %s: %s",
+          icons[vim.diagnostic.severity[d.severity]],
+          vim.diagnostic.severity[d.severity]:lower(),
+          d.message
+        )
       end,
     },
     severity_sort = true,
   })
-end
 
-local function cycle_qf(cmd)
-  local qf_list_empty = vim.fn.getqflist({ size = 0 }).size == 0
-  if qf_list_empty then
-    return
-  end
-  local current_qf = vim.fn.getqflist({ idx = 0 }).idx
-  local qf_size = vim.fn.getqflist({ size = 0 }).size
-  if cmd == "next" then
-    if current_qf == qf_size then
-      vim.cmd("cfirst")
-    else
-      vim.cmd("cnext")
-    end
-  elseif cmd == "prev" then
-    if current_qf == 1 then
-      vim.cmd("clast")
-    else
-      vim.cmd("cprev")
-    end
-  end
-end
-
-function M.config()
-  local opts = {
+  -- Quicker setup
+  require("quicker").setup({
     keys = {
       {
         ">",
@@ -124,21 +93,19 @@ function M.config()
       },
     },
     type_icons = {
-      E = "󰅚 ", -- Error
-      W = "󰀦 ", -- Warning
-      I = "󰋽 ", -- Info
-      N = "󰎚 ", -- Note
-      H = "󰌵 ", -- Hint
+      E = icons.diagnostics.Error .. " ",
+      W = icons.diagnostics.Warning .. " ",
+      I = icons.diagnostics.Information .. " ",
+      N = icons.ui.Note .. " ",
+      H = icons.diagnostics.Hint .. " ",
     },
-  }
-  require("quicker").setup(opts)
-  setup_diagnostic_config()
+  })
 
-  -- Replace the existing mappings with the cycling versions
-  nmap("<a-j>", function()
+  -- Quickfix navigation mappings
+  vim.keymap.set("n", "<a-j>", function()
     cycle_qf("next")
   end, { desc = "Next quickfix item (cycles)" })
-  nmap("<a-k>", function()
+  vim.keymap.set("n", "<a-k>", function()
     cycle_qf("prev")
   end, { desc = "Previous quickfix item (cycles)" })
 end

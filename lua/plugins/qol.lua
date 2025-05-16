@@ -3,8 +3,20 @@ return {
   priority = 1000,
   config = function()
     local snacks = require("snacks")
+
     snacks.setup({
       bigfile = { enabled = true },
+      input = {
+        enabled = true,
+        prompt_pos = "left",
+        icon_pos = "left",
+        expand = false,
+        win = {
+          row = 0.4,
+          position = "float",
+          border = "rounded",
+        },
+      },
       debug = { enabled = true },
       image = { enabled = true },
       indent = { enabled = true, animate = { enabled = false } },
