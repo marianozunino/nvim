@@ -1,6 +1,25 @@
 return {
   "folke/snacks.nvim",
   priority = 1000,
+  init = function()
+    local group = vim.api.nvim_create_augroup("BlinkCmpSnacksToggle", { clear = true })
+
+    vim.api.nvim_create_autocmd("User", {
+      group = group,
+      pattern = "BlinkCmpMenuOpen",
+      callback = function()
+        vim.g.snacks_animate = false
+      end,
+    })
+
+    vim.api.nvim_create_autocmd("User", {
+      group = group,
+      pattern = "BlinkCmpMenuClose",
+      callback = function()
+        vim.g.snacks_animate = true
+      end,
+    })
+  end,
   config = function()
     local snacks = require("snacks")
 
