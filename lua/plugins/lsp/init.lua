@@ -83,10 +83,13 @@ function M.config()
     "svelte",
     "vtsls",
     "ccls",
+    "templ",
   }
+
   local ensure_installed = vim.tbl_filter(function(s)
     return s ~= "ccls"
   end, servers)
+
   vim.list_extend(ensure_installed, {
     "prettierd",
     "shfmt",
@@ -95,7 +98,6 @@ function M.config()
     "clang-format",
     "csharpier",
     "quick-lint-js",
-    "templ",
   })
 
   require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
