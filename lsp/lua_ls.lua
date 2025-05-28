@@ -1,4 +1,3 @@
--- With 2-space indentation
 return {
   settings = {
     Lua = {
