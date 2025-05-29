@@ -36,6 +36,10 @@ return {
           border = "rounded",
         },
       },
+      select = {
+        enabled = true,
+        win = { border = "rounded" },
+      },
       debug = { enabled = true },
       image = { enabled = true },
       indent = { enabled = true, animate = { enabled = false } },

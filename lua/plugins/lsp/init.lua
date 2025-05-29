@@ -10,30 +10,6 @@ local M = {
   },
 }
 
-local servers = {
-  "gopls",
-  "jsonls",
-  "lua_ls",
-  "yamlls",
-  "graphql",
-  "html",
-  "omnisharp",
-  "svelte",
-  "vtsls",
-  "ccls",
-  "templ",
-}
-
-local tools = {
-  "prettierd",
-  "shfmt",
-  "stylua",
-  "latexindent",
-  "clang-format",
-  "csharpier",
-  "quick-lint-js",
-}
-
 local function setup_keymaps(bufnr)
   local fzf = require("fzf-lua")
   local opts = { buffer = bufnr }
@@ -59,13 +35,35 @@ local function setup_keymaps(bufnr)
   nmap("<leader>ws", fzf.lsp_workspace_symbols, vim.tbl_extend("force", opts, { desc = "Workspace Symbols" }))
 
   -- LSP management
-  nmap("<leader>lr", ":LspRestart<CR>", vim.tbl_extend("force", opts, { desc = "Restart LSP" }))
+  nmap("<leader>lr", function()
+    local clients = vim.lsp.get_clients({ bufnr = bufnr })
+    if #clients == 0 then
+      vim.notify("No LSP clients attached to buffer", vim.log.levels.WARN)
+      return
+    end
+
+    local client_names = {}
+    for _, client in ipairs(clients) do
+      table.insert(client_names, client.name)
+      vim.cmd("LspRestart " .. client.name)
+    end
+    vim.notify("Restarted LSP clients: " .. table.concat(client_names, ", "), vim.log.levels.INFO)
+  end, vim.tbl_extend("force", opts, { desc = "Restart LSP" }))
   nmap("<leader>li", ":LspInfo<CR>", vim.tbl_extend("force", opts, { desc = "LSP Info" }))
 end
 
 function M.config()
   require("mason").setup({ max_concurrent_installers = 4 })
   require("fidget").setup({})
+
+  local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+  function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+    opts = opts or {}
+    opts.border = opts.border or "rounded"
+    opts.max_width = opts.max_width or 80
+    opts.max_height = opts.max_height or 20
+    return orig_util_open_floating_preview(contents, syntax, opts, ...)
+  end
 
   -- Diagnostics
   vim.diagnostic.config({
@@ -82,10 +80,36 @@ function M.config()
     } or {},
   })
 
-  -- Mason setup
-  local mason_servers = vim.tbl_filter(function(s)
-    return s ~= "ccls"
+  local servers = {
+    "gopls",
+    "jsonls",
+    "lua_ls",
+    "yamlls",
+    "graphql",
+    "html",
+    "omnisharp",
+    "svelte",
+    "vtsls",
+    "ccls",
+    "templ",
+  }
+
+  local tools = {
+    "prettierd",
+    "shfmt",
+    "stylua",
+    "latexindent",
+    "clang-format",
+    "csharpier",
+    "quick-lint-js",
+  }
+
+  local mason_unsupported = { "ccls" }
+
+  local mason_servers = vim.tbl_filter(function(server)
+    return not vim.tbl_contains(mason_unsupported, server)
   end, servers)
+
   require("mason-lspconfig").setup({
     ensure_installed = mason_servers,
     automatic_installation = true,

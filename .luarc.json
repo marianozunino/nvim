@@ -1,6 +1,9 @@
 {
     "diagnostics.globals": [
         "Snacks"
+    ],
+    "diagnostics.disable": [
+        "duplicate-set-field"
     ]
 }
 
