@@ -28,6 +28,7 @@ local M = {
       require("mini.surround").setup({})
     end,
   },
+
   {
     "echasnovski/mini.statusline",
     version = false,
@@ -37,16 +38,42 @@ local M = {
       MiniStatusline.section_codeium = function(args)
         args = args or {}
         local trunc_width = args.trunc_width or 75
+        if MiniStatusline.is_truncated(trunc_width) then
+          return ""
+        end
+        local status = vim.fn["codeium#GetStatusString"]()
+        if status and status ~= "" then
+          local icon = args.icon or "󰘦 "
+          return icon .. status
+        end
+        return ""
+      end
 
+      MiniStatusline.section_worktree = function(args)
+        args = args or {}
+        local trunc_width = args.trunc_width or 75
         if MiniStatusline.is_truncated(trunc_width) then
           return ""
         end
 
-        local status = vim.fn["codeium#GetStatusString"]()
+        -- Get current directory
+        local cwd = vim.fn.getcwd()
 
-        if status and status ~= "" then
-          local icon = args.icon or "󰘦 "
-          return icon .. status
+        -- Run git worktree list to check if we're in a worktree
+        local handle = io.popen("git worktree list 2>/dev/null")
+        if not handle then
+          return ""
+        end
+
+        local output = handle:read("*a")
+        handle:close()
+
+        for line in output:gmatch("[^\n]+") do
+          local path, branch = line:match("^([^%s]+)%s+%[?([^%]]*)")
+          if path and path == cwd and branch and branch ~= "" then
+            local icon = args.icon or "🌿 "
+            return icon .. branch
+          end
         end
 
         return ""
@@ -63,6 +90,7 @@ local M = {
         local location = MiniStatusline.section_location({ trunc_width = 75 })
         local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
         local codeium = MiniStatusline.section_codeium({ trunc_width = 75 })
+        local worktree = MiniStatusline.section_worktree({ trunc_width = 75 })
 
         return MiniStatusline.combine_groups({
           { hl = mode_hl, strings = { mode } },
@@ -70,7 +98,7 @@ local M = {
           "%<", -- Mark general truncate point
           { hl = "MiniStatuslineFilename", strings = { filename } },
           "%=", -- End left alignment
-          { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+          { hl = "MiniStatuslineFileinfo", strings = { fileinfo, worktree } },
           { hl = mode_hl, strings = { codeium, search, location } },
         })
       end

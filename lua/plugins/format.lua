@@ -28,6 +28,7 @@ return {
         cpp = { "clang-format" },
         hcl = { "hcl" },
         toml = { "taplo" },
+        typst = { "prettypst" },
       },
       formatters = {
         csharpier = {
