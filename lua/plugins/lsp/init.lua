@@ -129,14 +129,14 @@ return {
     local servers = {
       "gopls",
       "jsonls",
+      "clangd",
       "lua_ls",
       "yamlls",
       "graphql",
       "html",
       "omnisharp",
       "svelte",
-      "vtsls",
-      "ccls",
+      -- "vtsls",
       "templ",
       "tinymist",
     }
@@ -153,7 +153,7 @@ return {
     }
 
     -- Servers not supported by mason
-    local mason_unsupported = { "ccls" }
+    local mason_unsupported = {}
 
     local mason_servers = vim.tbl_filter(function(server)
       return not vim.tbl_contains(mason_unsupported, server)
@@ -202,5 +202,20 @@ return {
         end
       end,
     })
+
+    vim.lsp.config("ts_go_ls", {
+      cmd = { vim.loop.os_homedir() .. "/Dev/random/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
+      filetypes = {
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx",
+      },
+      root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+    })
+
+    vim.lsp.enable("ts_go_ls")
   end,
 }

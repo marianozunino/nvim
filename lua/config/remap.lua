@@ -55,9 +55,7 @@ nmap("<leader>u", vim.cmd.UndotreeToggle)
 
 -- nnoremap yl :let @" = expand("%:p")<cr>
 nmap("yl", function()
-  local file = vim.fn.expand("%:p")
-  print("Copied path to clipboard: " .. file)
-  -- copy to os clipboard
+  local file = vim.fn.expand("%")
   vim.fn.setreg("+", file)
 end, { desc = "Copy file path to clipboard" })
 
