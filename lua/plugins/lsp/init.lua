@@ -136,9 +136,10 @@ return {
       "html",
       "omnisharp",
       "svelte",
-      -- "vtsls",
+      "vtsls",
       "templ",
       "tinymist",
+      "jdtls",
     }
 
     -- Tools for mason-tool-installer
