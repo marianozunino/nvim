@@ -29,6 +29,7 @@ return {
         hcl = { "hcl" },
         toml = { "taplo" },
         typst = { "prettypst" },
+        java = { "google-java-format" },
       },
       formatters = {
         csharpier = {
