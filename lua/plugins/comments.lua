@@ -11,8 +11,24 @@ local M = {
         enable_autocmd = false,
       })
 
+      local function pre_hook(ctx)
+        local U = require("Comment.utils")
+
+        -- Check filetype
+        local ft = vim.bo.filetype
+        if ft == "c" or ft == "cpp" then
+          if ctx.ctype == U.ctype.linewise then
+            return "// %s"
+          elseif ctx.ctype == U.ctype.blockwise then
+            return "/* %s */"
+          end
+        end
+
+        return require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()(ctx)
+      end
+
       require("Comment").setup({
-        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+        pre_hook = pre_hook,
         opleader = {
           line = "gc",
           block = "gC",
@@ -28,6 +44,7 @@ local M = {
     config = function()
       require("todo-comments").setup({
         keywords = {
+          BAD = { icon = "󰇷 ", color = "error" },
           FUCK = { icon = "󰇷 ", color = "error" },
           SHITTY = { icon = "󰇷 ", color = "error" },
         },

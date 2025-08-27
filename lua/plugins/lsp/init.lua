@@ -136,7 +136,7 @@ return {
       "html",
       "omnisharp",
       "svelte",
-      "vtsls",
+      -- "vtsls",
       "templ",
       "tinymist",
       "jdtls",

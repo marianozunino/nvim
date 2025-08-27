@@ -4,6 +4,20 @@ local M = {
     "nvim-lua/plenary.nvim",
     { "L3MON4D3/LuaSnip", version = "v2.*" },
     "folke/lazydev.nvim",
+    {
+      "MattiasMTS/cmp-dbee",
+      dependencies = {
+        { "kndndrj/nvim-dbee" },
+      },
+      ft = "sql", -- optional but good to have
+      opts = {}, -- needed
+    },
+    {
+      "saghen/blink.compat",
+      version = "2.*",
+      lazy = true,
+      opts = {},
+    },
   },
   version = "*",
 }
@@ -34,10 +48,14 @@ M.config = function()
     },
 
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "dadbod", "lazydev" },
+      default = { "lsp", "path", "snippets", "buffer", "lazydev" },
       providers = {
-        dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+        dbee = { name = "cmp-dbee", module = "blink.compat.source" },
         lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
+      },
+
+      per_filetype = {
+        sql = { "dbee", "buffer" },
       },
     },
 

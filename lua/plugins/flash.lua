@@ -14,9 +14,9 @@ local M = {
 }
 
 M.config = function()
-  nmap("<leader>ff", function()
-    require("flash").jump()
-  end, { desc = "Flash" })
+  -- nmap("<leader>ff", function()
+  --   require("flash").jump()
+  -- end, { desc = "Flash" })
 end
 
 return M

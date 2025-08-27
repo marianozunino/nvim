@@ -1,18 +1,60 @@
-local M = {
-  "tpope/vim-dadbod",
-  cmd = {
-    "DBUI",
-  },
+return {
+  "kndndrj/nvim-dbee",
+  enabled = true,
+  cmd = "Dbee",
   dependencies = {
-    "kristijanhusak/vim-dadbod-ui",
-    "kristijanhusak/vim-dadbod-completion",
+    "MunifTanjim/nui.nvim",
+  },
+  -- build = function()
+  -- local binary = vim.fn.expand("$HOME") .. "/.local/share/nvim/dbee/bin/dbee"
+  -- if vim.fn.filereadable(binary) ~= 0 then
+  --   require("dbee").install("go")
+  -- end
+  -- end,
+  config = function(_, opts)
+    local dbee = require("dbee")
+    dbee.setup({
+      -- connections
+      -- sources = {
+      --   require("dbee.sources").FileSource:new(vim.fn.expand("$HOME") .. "/.local/share/db_ui/connections.json"),
+      -- },
+      -- editor
+      -- editor = {},
+      -- result
+      result = {
+        -- number of rows in the results set to display per page
+        page_size = 50,
+        focus_result = false,
+      },
+      -- mappings
+      mappings = {
+        -- next/previous page
+        { key = "L", mode = "", action = "page_next" },
+        { key = "H", mode = "", action = "page_prev" },
+        { key = "]", mode = "", action = "page_last" },
+        { key = "[", mode = "", action = "page_first" },
+        -- yank rows as csv/json
+        { key = "<leader>yj", mode = "n", action = "yank_current_json" },
+        { key = "<leader>yj", mode = "v", action = "yank_selection_json" },
+        { key = "<leader>YJ", mode = "", action = "yank_all_json" },
+        { key = "<leader>yc", mode = "n", action = "yank_current_csv" },
+        { key = "<leader>yc", mode = "v", action = "yank_selection_csv" },
+        { key = "<leader>YC", mode = "", action = "yank_all_csv" },
+
+        -- cancel current call execution
+        { key = "<C-c>", mode = "", action = "cancel_call" },
+      },
+    })
+  end,
+  keys = {
+    {
+      "<leader>bt",
+      function()
+        require("dbee").toggle()
+      end,
+      desc = "toggle db_ui",
+      mode = "n",
+      silent = true,
+    },
   },
 }
-
-M.config = function()
-  vim.g.db_ui_use_nerd_fonts = 1
-  -- g:db_ui_save_location
-  vim.g.db_ui_save_location = "~/Sync/Work/Stuzo/queries"
-end
-
-return M
