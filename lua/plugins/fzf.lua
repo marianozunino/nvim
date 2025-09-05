@@ -36,27 +36,27 @@ M.config = function()
   nmap("<leader>oc", fzf_lua.lsp_outgoing_calls, { desc = "Outgoing Calls" })
   nmap("<leader>gf", fzf_lua.live_grep, { desc = "Find Live Grep" })
 
-  -- local exclusions = {
-  --   "node_modules",
-  --   ".git",
-  --   "dist",
-  --   "build",
-  --   "coverage",
-  --   "public",
-  -- }
+  local exclusions = {
+    "node_modules",
+    ".git",
+    "dist",
+    "build",
+    "coverage",
+    "public",
+  }
 
-  -- local exclude_opts = ""
-  -- for _, item in ipairs(exclusions) do
-  --   exclude_opts = exclude_opts .. " --exclude " .. item
-  -- end
-  --
-  -- nmap("<leader>/", function()
-  --   fzf_lua.files({
-  --     cwd_prompt = false,
-  --     silent = true,
-  --     fd_opts = "--hidden --no-ignore --type f" .. exclude_opts,
-  --   })
-  -- end, { desc = "Find Files" })
+  local exclude_opts = ""
+  for _, item in ipairs(exclusions) do
+    exclude_opts = exclude_opts .. " --exclude " .. item
+  end
+
+  nmap("<leader>/", function()
+    fzf_lua.files({
+      cwd_prompt = false,
+      silent = true,
+      fd_opts = "--hidden --no-ignore --type f" .. exclude_opts,
+    })
+  end, { desc = "Find Files" })
   nmap(";", fzf_lua.buffers, { desc = "Find Buffers" })
   nmap("sb", fzf_lua.grep_curbuf, { desc = "Search Current Buffer" })
   nmap("gw", fzf_lua.grep_cword, { desc = "Search word under cursor" })
